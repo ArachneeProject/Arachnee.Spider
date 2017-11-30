@@ -12,6 +12,8 @@ namespace Spider.Exports
                 throw new FileNotFoundException($"Archive file was not found at \"{gzipFilePath}\"");
             }
 
+            Logger.Instance.LogMessage("Unzipping " + gzipFilePath);
+
             string decompressedFilePath;
 
             var fileToDecompress = new FileInfo(gzipFilePath);
@@ -28,6 +30,8 @@ namespace Spider.Exports
                     }
                 }
             }
+
+            Logger.Instance.LogMessage("File unzipped at " + decompressedFilePath);
 
             return decompressedFilePath;
         }

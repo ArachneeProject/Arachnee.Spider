@@ -32,7 +32,11 @@ namespace Spider.Exports
             
             var request = new RestRequest(resource, Method.GET);
 
+            Logger.Instance.LogMessage("Downloading " + resource + "...");
+
             var response = _client.Execute(request);
+
+            Logger.Instance.LogMessage("Downloading done.");
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -42,6 +46,8 @@ namespace Spider.Exports
             string filePath = Path.Combine(destinationFolder, resource);
 
             File.WriteAllBytes(filePath, response.RawBytes);
+
+            Logger.Instance.LogMessage("Archive file created at " + filePath);
 
             return filePath;
         }

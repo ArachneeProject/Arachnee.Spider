@@ -45,5 +45,11 @@ namespace Spider
             Console.WriteLine(error);
             File.AppendAllText(_logFile, $"\n{DateTime.Now:G} ERROR: " + error);
         }
+
+        public void LogException(Exception exception)
+        {
+            Console.WriteLine(exception.Message);
+            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} EXCEPTION: " + exception.Message + "\n" + exception.StackTrace);
+        }
     }
 }

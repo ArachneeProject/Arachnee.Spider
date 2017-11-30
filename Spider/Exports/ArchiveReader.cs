@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Spider.Tmdb;
-using Spider.Tmdb.TmdbObjects;
 
 namespace Spider.Exports
 {
@@ -12,7 +9,7 @@ namespace Spider.Exports
     {
         private TmdbClient _client = new TmdbClient();
 
-        public IEnumerable<TmdbMovie> LoadMovies(string archiveJsonPath)
+        public IEnumerable<ulong> ReadMovieIds(string archiveJsonPath)
         {
             using (var streamReader = new StreamReader(archiveJsonPath))
             {
@@ -26,16 +23,7 @@ namespace Spider.Exports
                         continue;
                     }
 
-                    TmdbMovie movie;
-                    try
-                    {
-                        movie = _client.GetMovie(archiveEntry.Id);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Instance.
-                    }
-                    
+                    yield return archiveEntry.Id;
                 }
             }
         }
