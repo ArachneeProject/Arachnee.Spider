@@ -48,5 +48,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Spider\Spider.csproj">
+      <Project>{b7bf4ecc-2e6b-4bf3-9969-e5e152fb12d2}</Project>
+      <Name>Spider</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
