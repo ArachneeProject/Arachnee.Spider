@@ -29,17 +29,13 @@ namespace TmdbCrwaler
             {
                 Dequeue();
             }
-
-            Logger.Instance.LogMessage(item + " was added to cache.");
+            
             _queue.Enqueue(item);
         }
 
         public T Dequeue()
         {
-            var discarded = _queue.Dequeue();
-            Logger.Instance.LogMessage(discarded + " was discarded from cache.");
-
-            return discarded;
+            return _queue.Dequeue();
         }
 
         public IEnumerator<T> GetEnumerator()

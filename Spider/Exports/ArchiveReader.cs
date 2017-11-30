@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Spider.ArachneeCore;
@@ -24,7 +25,18 @@ namespace Spider.Exports
                         continue;
                     }
 
-                    yield return _proxy.GetMovie(archiveEntry.Id);
+                    Entry entry;
+                    try
+                    {
+                        entry = _proxy.GetMovie(archiveEntry.Id);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Instance.LogException(e);
+                        continue;
+                    }
+
+                    yield return entry;
                 }
             }
         }

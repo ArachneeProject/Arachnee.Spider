@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 using Newtonsoft.Json;
 using RestSharp;
 using Spider.Tmdb.TmdbObjects;
@@ -63,7 +64,8 @@ namespace Spider.Tmdb
         private string ExecuteRequest(IRestRequest request)
         {
             var response = _client.Execute(request);
-            
+            Thread.Sleep(250); // ensure no more than 40 request per 10s are executed.
+
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 throw new FailedRequestException(_client.BuildUri(request).ToString(), response);

@@ -10,7 +10,7 @@ namespace Runner
         static void Main(string[] args)
         {
             var spiderFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Arachnee.Spider");
-            var logFilePath = Path.Combine(spiderFolder, "logs.txt");
+            var logFilePath = Path.Combine(spiderFolder, DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") +  "_spider.log");
             Logger.Initialize(logFilePath);
 
             Console.WriteLine("Log file at " + logFilePath);
