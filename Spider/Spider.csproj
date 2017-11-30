@@ -58,6 +58,7 @@
     <Compile Include="Exports\ArchiveDownloader.cs" />
     <Compile Include="Exports\ArchiveEntry.cs" />
     <Compile Include="Exports\ArchiveReader.cs" />
+    <Compile Include="Serialization\HighPressureSerializer.cs" />
     <Compile Include="LimitedQueue.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Tmdb\TmdbObjects\BelongsToCollection.cs" />

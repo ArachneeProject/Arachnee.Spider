@@ -9,7 +9,12 @@ namespace Spider.Exports
 {
     public class ArchiveReader
     {
-        private readonly TmdbProxy _proxy = new TmdbProxy();
+        private readonly TmdbProxy _proxy;
+
+        public ArchiveReader(TmdbProxy proxy)
+        {
+            _proxy = proxy;
+        }
 
         public IEnumerable<Entry> ReadMovies(string archiveJsonPath)
         {

@@ -92,6 +92,8 @@ namespace Spider.ArachneeCore
 
             _cache.Enqueue(entry);
 
+            Logger.Instance.LogMessage("Proxy downloaded " + entry);
+
             return entry;
         }
 
