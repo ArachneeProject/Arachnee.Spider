@@ -1,7 +1,7 @@
 ﻿using System;
 using RestSharp;
 
-namespace Spider
+namespace Spider.Tmdb
 {
     public class FailedRequestException : Exception
     {

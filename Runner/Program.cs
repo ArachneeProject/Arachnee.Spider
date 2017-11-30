@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Spider;
+using Spider.Exports;
 
 namespace Runner
 {
@@ -19,7 +20,7 @@ namespace Runner
 
             Console.WriteLine("Downloading...");
 
-            var movieZipPath = downloader.GetMovies(DateTime.UtcNow.AddDays(-2), tempPath);
+            var movieZipPath = downloader.DownloadMovies(DateTime.UtcNow.AddDays(-2), tempPath);
 
             Console.WriteLine("Done!");
             Console.WriteLine("Unzipping...");
@@ -33,7 +34,6 @@ namespace Runner
                 while (!streamReader.EndOfStream)
                 {
                     var line = streamReader.ReadLine();
-
                 }
             }
 

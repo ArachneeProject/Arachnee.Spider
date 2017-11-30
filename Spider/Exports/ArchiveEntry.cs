@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Spider
+namespace Spider.Exports
 {
     public class ArchiveEntry
     {

@@ -47,11 +47,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArchiveDownloader.cs" />
-    <Compile Include="ArchiveEntry.cs" />
-    <Compile Include="FailedRequestException.cs" />
+    <Compile Include="Exports\ArchiveDownloader.cs" />
+    <Compile Include="Exports\ArchiveEntry.cs" />
+    <Compile Include="Tmdb\TmdbObjects\BelongsToCollection.cs" />
+    <Compile Include="Tmdb\TmdbObjects\Cast.cs" />
+    <Compile Include="Tmdb\TmdbObjects\CombinedCredits.cs" />
+    <Compile Include="Tmdb\TmdbObjects\CombinedResult.cs" />
+    <Compile Include="Tmdb\TmdbObjects\Configuration.cs" />
+    <Compile Include="Tmdb\Constant.cs" />
+    <Compile Include="Tmdb\TmdbObjects\Credits.cs" />
+    <Compile Include="Tmdb\TmdbObjects\Crew.cs" />
+    <Compile Include="Tmdb\FailedRequestException.cs" />
+    <Compile Include="Tmdb\TmdbObjects\IdentifiedName.cs" />
+    <Compile Include="Tmdb\TmdbObjects\ImageConfiguration.cs" />
+    <Compile Include="Tmdb\TmdbObjects\ImageDetails.cs" />
+    <Compile Include="Tmdb\TmdbObjects\Images.cs" />
+    <Compile Include="Tmdb\TmdbObjects\Job.cs" />
+    <Compile Include="Tmdb\TmdbObjects\KnownFor.cs" />
+    <Compile Include="Tmdb\TmdbObjects\OfficialJobList.cs" />
+    <Compile Include="Tmdb\TmdbObjects\ProductionCountry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Unzipper.cs" />
+    <Compile Include="Tmdb\TmdbObjects\SearchResultPage.cs" />
+    <Compile Include="Tmdb\TmdbObjects\SpokenLanguage.cs" />
+    <Compile Include="Tmdb\TmdbClient.cs" />
+    <Compile Include="Tmdb\TmdbJsonSettings.cs" />
+    <Compile Include="Tmdb\TmdbObjects\TmdbMovie.cs" />
+    <Compile Include="Tmdb\TmdbObjects\TmdbPerson.cs" />
+    <Compile Include="Exports\Unzipper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

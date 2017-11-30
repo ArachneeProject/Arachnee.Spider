@@ -2,14 +2,15 @@
 using System.IO;
 using System.Net;
 using RestSharp;
+using Spider.Tmdb;
 
-namespace Spider
+namespace Spider.Exports
 {
     public class ArchiveDownloader
     {
         private readonly RestClient _client = new RestClient("http://files.tmdb.org/p/exports/");
 
-        public string GetMovies(DateTime archiveDate, string destinationFolder)
+        public string DownloadMovies(DateTime archiveDate, string destinationFolder)
         {
             if (archiveDate.Kind != DateTimeKind.Utc)
             {
