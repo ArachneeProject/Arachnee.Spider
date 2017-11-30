@@ -20,7 +20,7 @@ namespace Spider.ArachneeCore
             {"Boom Operator", ConnectionType.BoomOperator},
         };
 
-        private readonly LimitedQueue<Entry> _cache = new LimitedQueue<Entry>(10);
+        private readonly LimitedQueue<Entry> _cache = new LimitedQueue<Entry>(1000);
 
         public Entry GetMovie(ulong id)
         {

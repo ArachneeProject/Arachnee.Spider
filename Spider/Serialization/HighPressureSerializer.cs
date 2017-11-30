@@ -32,6 +32,7 @@ namespace Spider
                 builder.Append(((int) group.Key).ToString("X"));
                 builder.Append("_");
                 builder.Append(string.Join(",", group.Select(c => CompactEntryId(c.ConnectedId))));
+                builder.Append(";");
             }
 
             File.AppendAllText(_file, builder.ToString());

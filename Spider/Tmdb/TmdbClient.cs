@@ -22,7 +22,7 @@ namespace Spider.Tmdb
             };
 
             request.AddUrlSegment("id", tmdbMovieId.ToString());
-            request.AddQueryParameter("append_to_response", "credits,images");
+            request.AddQueryParameter("append_to_response", "credits");
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var response = ExecuteRequest(request);
@@ -47,7 +47,7 @@ namespace Spider.Tmdb
             };
 
             request.AddUrlSegment("id", tmdbPersonId.ToString());
-            request.AddQueryParameter("append_to_response", "combined_credits,images");
+            request.AddQueryParameter("append_to_response", "combined_credits");
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var response = ExecuteRequest(request);
