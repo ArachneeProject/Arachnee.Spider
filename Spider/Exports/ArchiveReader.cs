@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using Spider.ArachneeCore;
 using Spider.Tmdb;
 
 namespace Spider.Exports
 {
     public class ArchiveReader
     {
-        private TmdbClient _client = new TmdbClient();
+        private readonly TmdbProxy _proxy = new TmdbProxy();
 
-        public IEnumerable<ulong> ReadMovieIds(string archiveJsonPath)
+        public IEnumerable<Entry> ReadMovies(string archiveJsonPath)
         {
             using (var streamReader = new StreamReader(archiveJsonPath))
             {
@@ -23,7 +24,7 @@ namespace Spider.Exports
                         continue;
                     }
 
-                    yield return archiveEntry.Id;
+                    yield return _proxy.GetMovie(archiveEntry.Id);
                 }
             }
         }

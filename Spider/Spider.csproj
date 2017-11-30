@@ -47,6 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArachneeCore\Artist.cs" />
+    <Compile Include="ArachneeCore\Connection.cs" />
+    <Compile Include="ArachneeCore\ConnectionType.cs" />
+    <Compile Include="ArachneeCore\DefaultEntry.cs" />
+    <Compile Include="ArachneeCore\Entry.cs" />
+    <Compile Include="ArachneeCore\Movie.cs" />
+    <Compile Include="ArachneeCore\Serie.cs" />
+    <Compile Include="ArachneeCore\TmdbProxy.cs" />
     <Compile Include="Exports\ArchiveDownloader.cs" />
     <Compile Include="Exports\ArchiveEntry.cs" />
     <Compile Include="Exports\ArchiveReader.cs" />
