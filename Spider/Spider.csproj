@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="Exports\ArchiveDownloader.cs" />
     <Compile Include="Exports\ArchiveEntry.cs" />
+    <Compile Include="Exports\ArchiveReader.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Tmdb\TmdbObjects\BelongsToCollection.cs" />
     <Compile Include="Tmdb\TmdbObjects\Cast.cs" />
     <Compile Include="Tmdb\TmdbObjects\CombinedCredits.cs" />

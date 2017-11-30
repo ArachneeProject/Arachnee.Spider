@@ -11,6 +11,8 @@ namespace Runner
         {
             var tempPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Arachnee.Spider");
 
+            Logger.Initialize(Path.Combine(tempPath, "logs.txt"));
+
             if (!Directory.Exists(tempPath))
             {
                 Directory.CreateDirectory(tempPath);
@@ -29,13 +31,7 @@ namespace Runner
 
             Console.WriteLine("Unzipped!");
 
-            using (var streamReader = new StreamReader(movieIdsPath))
-            {
-                while (!streamReader.EndOfStream)
-                {
-                    var line = streamReader.ReadLine();
-                }
-            }
+            
 
             Console.WriteLine("Press any key");
             Console.ReadKey();

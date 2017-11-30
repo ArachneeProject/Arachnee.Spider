@@ -8,6 +8,6 @@ namespace Spider.Exports
             public bool Adult { get; set; }
 
             [JsonProperty("id")]
-            public long Id { get; set; }
+            public ulong Id { get; set; }
     }
 }
