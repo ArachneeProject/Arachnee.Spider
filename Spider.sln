@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{B875A962-C7F3-4A32-8395-5610A91D0DD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spider", "Spider\Spider.csproj", "{B7BF4ECC-2E6B-4BF3-9969-E5E152FB12D2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B875A962-C7F3-4A32-8395-5610A91D0DD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B875A962-C7F3-4A32-8395-5610A91D0DD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B875A962-C7F3-4A32-8395-5610A91D0DD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B875A962-C7F3-4A32-8395-5610A91D0DD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7BF4ECC-2E6B-4BF3-9969-E5E152FB12D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7BF4ECC-2E6B-4BF3-9969-E5E152FB12D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7BF4ECC-2E6B-4BF3-9969-E5E152FB12D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7BF4ECC-2E6B-4BF3-9969-E5E152FB12D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DF3AD859-F620-468F-89DB-1CC1969834A6}
+	EndGlobalSection
+EndGlobal
