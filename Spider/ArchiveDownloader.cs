@@ -9,7 +9,7 @@ namespace Spider
     {
         private readonly RestClient _client = new RestClient("http://files.tmdb.org/p/exports/");
 
-        public void GetMovies(DateTime archiveDate, string destinationFolder)
+        public string GetMovies(DateTime archiveDate, string destinationFolder)
         {
             if (archiveDate.Kind != DateTimeKind.Utc)
             {
@@ -41,6 +41,8 @@ namespace Spider
             string filePath = Path.Combine(destinationFolder, resource);
 
             File.WriteAllBytes(filePath, response.RawBytes);
+
+            return filePath;
         }
     }
 }
