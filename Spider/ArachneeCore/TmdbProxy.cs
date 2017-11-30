@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Spider.Tmdb;
 using Spider.Tmdb.TmdbObjects;
+using TmdbCrwaler;
 
 namespace Spider.ArachneeCore
 {
@@ -18,6 +19,8 @@ namespace Spider.ArachneeCore
             {"Director", ConnectionType.Director},
             {"Boom Operator", ConnectionType.BoomOperator},
         };
+
+        private readonly LimitedQueue<Entry> _cache = new LimitedQueue<Entry>(10);
 
         public Entry GetMovie(ulong id)
         {
@@ -60,8 +63,15 @@ namespace Spider.ArachneeCore
                 throw new ArgumentException($"\"{entryId}\" is not a valid id.", nameof(entryId));
             }
 
-            // convert the tmdb object to its corresponding Entry
-            Entry entry;
+            // try to get entry from cache
+            var entry = _cache.FirstOrDefault(e => e.Id == entryId);
+            if (entry != null)
+            {
+                Logger.Instance.LogMessage("Proxy reused cache with " + entry);
+                return entry;
+            }
+
+            // download and convert the tmdb object to its corresponding Entry
             switch (entryType) // TODO: Handle Serie
             {
                 case nameof(Movie):
@@ -79,6 +89,8 @@ namespace Spider.ArachneeCore
                         $"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.",
                         nameof(entryId));
             }
+
+            _cache.Enqueue(entry);
 
             return entry;
         }

@@ -13,7 +13,7 @@ namespace Runner
             var logFilePath = Path.Combine(spiderFolder, "logs.txt");
             Logger.Initialize(logFilePath);
 
-            Console.WriteLine("Log file created at " + logFilePath);
+            Console.WriteLine("Log file at " + logFilePath);
 
             if (!Directory.Exists(spiderFolder))
             {
@@ -27,7 +27,19 @@ namespace Runner
             var movieIdsPath = Unzipper.Unzip(movieZipPath);
             
             var reader = new ArchiveReader();
-            var movies = reader.ReadMovieIds(movieIdsPath);
+            var entries = reader.ReadMovies(movieIdsPath);
+
+            int i = 0;
+            foreach (var entry in entries)
+            {
+                i++;
+                if (i > 50)
+                {
+                    break;
+                }
+
+                Console.WriteLine(entry);
+            }
 
             Console.WriteLine("Press any key");
             Console.ReadKey();

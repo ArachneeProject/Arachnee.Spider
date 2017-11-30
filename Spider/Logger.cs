@@ -11,7 +11,7 @@ namespace Spider
         public Logger(string logFile)
         {
             this._logFile = logFile;
-            File.Create(logFile);
+            File.AppendAllText(logFile, string.Empty);
         }
 
         public static Logger Instance
@@ -30,7 +30,6 @@ namespace Spider
 
         public static void Initialize(string logFile)
         {
-            File.AppendAllText(logFile, string.Empty);
             _logger = new Logger(logFile);
         }
 
