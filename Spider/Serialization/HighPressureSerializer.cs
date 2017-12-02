@@ -5,14 +5,12 @@ using System.Linq;
 using System.Text;
 using Spider.ArachneeCore;
 
-namespace Spider
+namespace Spider.Serialization
 {
     public class HighPressureSerializer
     {
         private readonly string _file;
-
-        private Dictionary<string, List<Connection>> _buffer;
-
+        
         public HighPressureSerializer(string resultFilePath)
         {
             _file = resultFilePath;

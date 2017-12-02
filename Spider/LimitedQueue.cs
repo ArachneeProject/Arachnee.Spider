@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Spider;
 
-namespace TmdbCrwaler
+namespace Spider
 {
     public class LimitedQueue<T> : IEnumerable<T>
     {

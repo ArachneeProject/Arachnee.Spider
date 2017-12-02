@@ -4,7 +4,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using Spider.Tmdb;
 using Spider.Tmdb.TmdbObjects;
-using TmdbCrwaler;
 
 namespace Spider.ArachneeCore
 {
