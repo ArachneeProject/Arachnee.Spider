@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Spider;
 using Spider.ArachneeCore;
 using Spider.Exports;
@@ -13,9 +12,9 @@ namespace Runner
     {
         static void Main(string[] args)
         {
-            var spiderFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Arachnee.Spider");
-            var logFilePath = Path.Combine(spiderFolder, DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss") + "_spider.log");
+            var spiderFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Arachnee.Spider");
+            var now = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
+            var logFilePath = Path.Combine(spiderFolder, now + "_spider.log");
             Logger.Initialize(logFilePath);
 
             Console.WriteLine("Log file at " + logFilePath);
@@ -36,7 +35,7 @@ namespace Runner
             var reader = new ArchiveReader(proxy);
             var entries = reader.ReadMovies(movieIdsPath);
 
-            string outputFilePath = Path.Combine(spiderFolder, "output.json");
+            string outputFilePath = Path.Combine(spiderFolder, now + "_output.json");
 
             var serializer = new HighPressureSerializer(outputFilePath);
 
@@ -58,6 +57,7 @@ namespace Runner
                         continue;
                     }
 
+                    Logger.Instance.LogMessage(entry + " :: " + connection.Label + " :: " + connectedEntry);
                     toCompress.Add(connection);
                 }
 
