@@ -10,7 +10,7 @@ namespace Spider.Exports
     {
         private readonly RestClient _client = new RestClient("http://files.tmdb.org/p/exports/");
 
-        public string DownloadMovies(DateTime archiveDate, string destinationFolder)
+        public string DownloadPeople(DateTime archiveDate, string destinationFolder)
         {
             if (archiveDate.Kind != DateTimeKind.Utc)
             {
@@ -28,8 +28,8 @@ namespace Spider.Exports
                 throw new DirectoryNotFoundException($"Folder doesn't exist at \"{destinationFolder}\"");
             }
 
-            string resource = $"movie_ids_{archiveDate.Month:00}_{archiveDate.Day:00}_{archiveDate.Year:0000}.json.gz";
-            
+            string resource = $"person_ids_{archiveDate.Month:00}_{archiveDate.Day:00}_{archiveDate.Year:0000}.json.gz";
+
             var request = new RestRequest(resource, Method.GET);
 
             Logger.Instance.LogMessage("Downloading " + resource + "...");

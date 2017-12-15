@@ -33,6 +33,12 @@ namespace Spider
             _logger = new Logger(logFile);
         }
 
+        public void LogDebug(string message)
+        {
+            //Console.WriteLine(message);
+            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} DEBUG: " + message);
+        }
+
         public void LogMessage(string message)
         {
             Console.WriteLine(message);

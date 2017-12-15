@@ -66,10 +66,13 @@ namespace Spider.Serialization
             switch (entryType)
             {
                 case nameof(Movie):
-                    return "M" + id.ToString("X");
+                    return "m" + id.ToString("X");
 
                 case nameof(Artist):
-                    return "A" + id.ToString("X");
+                    return "a" + id.ToString("X");
+
+                case nameof(Serie):
+                    return "s" + id.ToString("X");
 
                 default:
                     throw new ArgumentException($"Chunk \"{entryType}\" of \"{entryId}\" is not handled.");

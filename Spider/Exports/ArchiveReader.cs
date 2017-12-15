@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Spider.ArachneeCore;
-using Spider.Tmdb;
 
 namespace Spider.Exports
 {
@@ -16,7 +15,7 @@ namespace Spider.Exports
             _proxy = proxy;
         }
 
-        public IEnumerable<Entry> ReadMovies(string archiveJsonPath)
+        public IEnumerable<Entry> ReadPeople(string archiveJsonPath)
         {
             using (var streamReader = new StreamReader(archiveJsonPath))
             {
@@ -25,15 +24,16 @@ namespace Spider.Exports
                     var line = streamReader.ReadLine();
                     var archiveEntry = JsonConvert.DeserializeObject<ArchiveEntry>(line);
 
-                    if (archiveEntry.Adult)
+                    if (archiveEntry.Adult || archiveEntry.Popularity < 1)
                     {
+                        Logger.Instance.LogMessage("Skipped " + archiveEntry.Id);
                         continue;
                     }
 
                     Entry entry;
                     try
                     {
-                        entry = _proxy.GetMovie(archiveEntry.Id);
+                        entry = _proxy.GetArtist(archiveEntry.Id);
                     }
                     catch (Exception e)
                     {

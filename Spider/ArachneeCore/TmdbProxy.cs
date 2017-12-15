@@ -18,9 +18,7 @@ namespace Spider.ArachneeCore
             {"Director", ConnectionType.Director},
             {"Boom Operator", ConnectionType.BoomOperator},
         };
-
-        private readonly LimitedQueue<Entry> _cache = new LimitedQueue<Entry>(1000);
-
+        
         public Entry GetMovie(ulong id)
         {
             return GetEntry(nameof(Movie) + IdSeparator + id);
@@ -61,16 +59,9 @@ namespace Spider.ArachneeCore
             {
                 throw new ArgumentException($"\"{entryId}\" is not a valid id.", nameof(entryId));
             }
-
-            // try to get entry from cache
-            var entry = _cache.FirstOrDefault(e => e.Id == entryId);
-            if (entry != null)
-            {
-                Logger.Instance.LogMessage("Proxy reused cache with " + entry);
-                return entry;
-            }
-
+            
             // download and convert the tmdb object to its corresponding Entry
+            Entry entry;
             switch (entryType) // TODO: Handle Serie
             {
                 case nameof(Movie):
@@ -88,11 +79,7 @@ namespace Spider.ArachneeCore
                         $"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.",
                         nameof(entryId));
             }
-
-            _cache.Enqueue(entry);
-
-            Logger.Instance.LogMessage("Proxy downloaded " + entry);
-
+            
             return entry;
         }
 
@@ -152,6 +139,12 @@ namespace Spider.ArachneeCore
 
         private Movie ConvertToMovie(TmdbMovie tmdbMovie)
         {
+            // clean up fields
+            if (!tmdbMovie.Runtime.HasValue)
+            {
+                tmdbMovie.Runtime = 0;
+            }
+
             // create the Movie from the tmdbMovie
             var movie = JsonConvert.DeserializeObject<Movie>(JsonConvert.SerializeObject(tmdbMovie));
             movie.Id = nameof(Movie) + IdSeparator + movie.Id;

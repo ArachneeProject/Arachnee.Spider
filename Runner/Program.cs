@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Spider;
 using Spider.ArachneeCore;
@@ -26,50 +27,48 @@ namespace Runner
 
             var downloader = new ArchiveDownloader();
 
-            var movieZipPath = downloader.DownloadMovies(DateTime.UtcNow.AddDays(-2), spiderFolder);
+            var peopleZipPath = downloader.DownloadPeople(DateTime.UtcNow.AddDays(-2), spiderFolder);
 
-            var movieIdsPath = Unzipper.Unzip(movieZipPath);
+            var movieIdsPath = Unzipper.Unzip(peopleZipPath);
 
             var proxy = new TmdbProxy();
 
             var reader = new ArchiveReader(proxy);
-            var entries = reader.ReadMovies(movieIdsPath);
+            var entries = reader.ReadPeople(movieIdsPath);
 
-            string outputFilePath = Path.Combine(spiderFolder, now + "_output.json");
-
+            string outputFilePath = Path.Combine(spiderFolder, now + "_output.spdr");
+            
             var serializer = new HighPressureSerializer(outputFilePath);
 
             int i = 0;
+            int max = 500;
+            var chrono = Stopwatch.StartNew();
             foreach (var entry in entries)
             {
                 i++;
-                if (i > 50)
+                if (i > max)
                 {
                     break;
                 }
 
-                var toCompress = new List<Connection>();
+                Logger.Instance.LogMessage(i + "/" + max + ", elapsed: " + chrono.Elapsed);
+
+                var connectionsToCompress = new List<Connection>();
                 foreach (var connection in entry.Connections)
                 {
-                    var connectedEntry = proxy.GetEntry(connection.ConnectedId);
-                    if (string.IsNullOrEmpty(connectedEntry.MainImagePath))
-                    {
-                        continue;
-                    }
-
-                    Logger.Instance.LogMessage(entry + " :: " + connection.Label + " :: " + connectedEntry);
-                    toCompress.Add(connection);
+                    Logger.Instance.LogDebug(entry + " :: " + connection.Label + " :: " + connection.ConnectedId);
+                    connectionsToCompress.Add(connection);
                 }
 
-                if (toCompress.Count == 0)
+                if (connectionsToCompress.Count == 0)
                 {
                     continue;
                 }
 
-                serializer.CompressAndWrite(entry.Id, toCompress);
+                serializer.CompressAndWrite(entry.Id, connectionsToCompress);
             }
 
-            Console.WriteLine("Press any key");
+            Console.WriteLine("Job done, press any key");
             Console.ReadKey();
         }
     }
