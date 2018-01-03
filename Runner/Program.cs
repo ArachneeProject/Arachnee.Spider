@@ -30,10 +30,11 @@ namespace Runner
             var moviesZipPath = downloader.DownloadMovies(DateTime.UtcNow.AddDays(-2), spiderFolder);
 
             var movieIdsPath = Unzipper.Unzip(moviesZipPath);
-
+            
             var proxy = new TmdbProxy();
 
             var reader = new ArchiveReader(proxy);
+            int entriesCount = reader.CountLines(movieIdsPath);
             var entries = reader.ReadMovies(movieIdsPath);
 
             string outputFilePath = Path.Combine(spiderFolder, now + "_output.spdr");
@@ -41,18 +42,16 @@ namespace Runner
             var serializer = new HighPressureSerializer(outputFilePath);
 
             int i = 0;
-            int max = 1000;
             var chrono = Stopwatch.StartNew();
             foreach (var entry in entries)
             {
                 i++;
-                if (i > max)
+                if (i % 25 == 0)
                 {
-                    break;
+                    float progress = (float)i / entriesCount * 100;
+                    Logger.Instance.LogMessage($"{i}/{entriesCount} ({progress:##0.000}%) - elapsed: {chrono.Elapsed}");
                 }
-
-                Logger.Instance.LogMessage(i + "/" + max + ", elapsed: " + chrono.Elapsed);
-
+                
                 var connectionsToCompress = new List<Connection>();
                 foreach (var connection in entry.Connections)
                 {
