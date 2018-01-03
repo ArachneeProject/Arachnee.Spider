@@ -15,7 +15,7 @@ namespace Spider.Exports
             _proxy = proxy;
         }
 
-        public IEnumerable<Entry> ReadPeople(string archiveJsonPath)
+        public IEnumerable<Entry> ReadMovies(string archiveJsonPath)
         {
             using (var streamReader = new StreamReader(archiveJsonPath))
             {
@@ -24,7 +24,7 @@ namespace Spider.Exports
                     var line = streamReader.ReadLine();
                     var archiveEntry = JsonConvert.DeserializeObject<ArchiveEntry>(line);
 
-                    if (archiveEntry.Adult || archiveEntry.Popularity < 1)
+                    if (archiveEntry.Adult || archiveEntry.Popularity < 0.01)
                     {
                         Logger.Instance.LogMessage("Skipped " + archiveEntry.Id);
                         continue;
@@ -33,7 +33,7 @@ namespace Spider.Exports
                     Entry entry;
                     try
                     {
-                        entry = _proxy.GetArtist(archiveEntry.Id);
+                        entry = _proxy.GetMovie(archiveEntry.Id);
                     }
                     catch (Exception e)
                     {

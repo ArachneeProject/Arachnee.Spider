@@ -19,16 +19,37 @@ namespace Spider.Exports
 
             if (archiveDate > DateTime.UtcNow)
             {
-                throw new ArgumentException(nameof(archiveDate),
-                    $"{nameof(archiveDate)} is not valid because it is in the future.");
+                throw new ArgumentException(nameof(archiveDate), $"{nameof(archiveDate)} is not valid because it is in the future.");
             }
 
+            string resource = $"person_ids_{archiveDate.Month:00}_{archiveDate.Day:00}_{archiveDate.Year:0000}.json.gz";
+
+            return Download(destinationFolder, resource);
+        }
+
+        public string DownloadMovies(DateTime archiveDate, string destinationFolder)
+        {
+            if (archiveDate.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException(nameof(archiveDate), $"{nameof(archiveDate)} is not UTC.");
+            }
+
+            if (archiveDate > DateTime.UtcNow)
+            {
+                throw new ArgumentException(nameof(archiveDate), $"{nameof(archiveDate)} is not valid because it is in the future.");
+            }
+
+            string resource = $"movie_ids_{archiveDate.Month:00}_{archiveDate.Day:00}_{archiveDate.Year:0000}.json.gz";
+
+            return Download(destinationFolder, resource);
+        }
+
+        private string Download(string destinationFolder, string resource)
+        {
             if (!Directory.Exists(destinationFolder))
             {
                 throw new DirectoryNotFoundException($"Folder doesn't exist at \"{destinationFolder}\"");
             }
-
-            string resource = $"person_ids_{archiveDate.Month:00}_{archiveDate.Day:00}_{archiveDate.Year:0000}.json.gz";
 
             var request = new RestRequest(resource, Method.GET);
 
