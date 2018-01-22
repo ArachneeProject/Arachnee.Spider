@@ -9,7 +9,7 @@ namespace Spider.Exports
     public class ArchiveReader
     {
         private readonly TmdbProxy _proxy;
-        private const float MinPopularity = 0.01f;
+        private const float MinPopularity = 0.1f;
 
         public ArchiveReader(TmdbProxy proxy)
         {

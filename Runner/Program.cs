@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Spider;
 using Spider.ArachneeCore;
 using Spider.Exports;
@@ -46,14 +47,20 @@ namespace Runner
             foreach (var entry in entries)
             {
                 i++;
-                if (i % 25 == 0)
+                if (i % 100 == 0)
                 {
                     float progress = (float)i / entriesCount * 100;
                     Logger.Instance.LogMessage($"{i}/{entriesCount} ({progress:##0.000}%) - elapsed: {chrono.Elapsed}");
                 }
+
+                if (string.IsNullOrEmpty(entry.MainImagePath))
+                {
+                    Logger.Instance.LogDebug("Skip " + entry + " because it has no image.");
+                    continue;
+                }
                 
                 var connectionsToCompress = new List<Connection>();
-                foreach (var connection in entry.Connections)
+                foreach (var connection in entry.Connections.Where(c => c.Type == ConnectionType.Actor || c.Type == ConnectionType.Director))
                 {
                     Logger.Instance.LogDebug(entry + " :: " + connection.Label + " :: " + connection.ConnectedId);
                     connectionsToCompress.Add(connection);
