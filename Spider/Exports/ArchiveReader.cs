@@ -11,6 +11,8 @@ namespace Spider.Exports
         private readonly TmdbProxy _proxy;
         private const float MinPopularity = 0.1f;
 
+        public event Action<ulong> SkippedId;
+
         public ArchiveReader(TmdbProxy proxy)
         {
             _proxy = proxy;
@@ -41,7 +43,7 @@ namespace Spider.Exports
             return lineCount;
         }
 
-        public IEnumerable<Entry> ReadMovies(string archiveJsonPath)
+        public IEnumerable<Entry> Read<TEntry>(string archiveJsonPath) where TEntry : Entry
         {
             using (var streamReader = new StreamReader(archiveJsonPath))
             {
@@ -52,20 +54,21 @@ namespace Spider.Exports
 
                     if (archiveEntry.Adult)
                     {
-                        Logger.Instance.LogMessage("Skipped adult movie " + archiveEntry.Id);
+                        Logger.Instance.LogMessage($"Skipped adult {typeof(TEntry).Name} {archiveEntry.Id}");
                         continue;
                     }
 
                     if (archiveEntry.Popularity < MinPopularity)
                     {
-                        Logger.Instance.LogMessage("Skipped movie " + archiveEntry.Id + " because its popularity (" + archiveEntry.Popularity + ") is less than " + MinPopularity);
+                        Logger.Instance.LogMessage($"Skipped {typeof(TEntry).Name} {archiveEntry.Id} because its popularity ({archiveEntry.Popularity} is less than {MinPopularity}).");
+                        SkippedId?.Invoke(archiveEntry.Id);
                         continue;
                     }
 
                     Entry entry;
                     try
                     {
-                        entry = _proxy.GetMovie(archiveEntry.Id);
+                        entry = _proxy.GetEntry($"{typeof(TEntry).Name}-{archiveEntry.Id}");
                     }
                     catch (Exception e)
                     {

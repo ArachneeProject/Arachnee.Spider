@@ -71,7 +71,7 @@ namespace Spider.Serialization
                 case nameof(Artist):
                     return "a" + id.ToString("X");
 
-                case nameof(Serie):
+                case nameof(TvSeries):
                     return "s" + id.ToString("X");
 
                 default:

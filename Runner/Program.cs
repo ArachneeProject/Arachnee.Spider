@@ -12,6 +12,11 @@ namespace Runner
 {
     class Program
     {
+        private const string MovieChoice = "movies";
+        private const string TvSeriesChoice = "tv";
+
+        private static int _progress = 0;
+
         static void Main(string[] args)
         {
             var spiderFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Arachnee.Spider");
@@ -26,31 +31,68 @@ namespace Runner
                 Directory.CreateDirectory(spiderFolder);
             }
 
+            Console.WriteLine($"Write \"{MovieChoice}\" or \"{TvSeriesChoice}\" to choose what to download:");
+            var choice = Console.ReadLine();
+            Logger.Instance.LogMessage("Asked to download " + choice);
+
             var downloader = new ArchiveDownloader();
 
-            var moviesZipPath = downloader.DownloadMovies(DateTime.UtcNow.AddDays(-2), spiderFolder);
+            string zipPath;
+            if (choice == MovieChoice)
+            {
+                zipPath = downloader.Download<Movie>(DateTime.UtcNow.AddDays(-2), spiderFolder);
+            }
+            else if (choice == TvSeriesChoice)
+            {
+                zipPath = downloader.Download<TvSeries>(DateTime.UtcNow.AddDays(-2), spiderFolder);
+            }
+            else
+            {
+                Logger.Instance.LogError(choice + " not handled.");
+                return;
+            }
 
-            var movieIdsPath = Unzipper.Unzip(moviesZipPath);
+            var idsPath = Unzipper.Unzip(zipPath);
             
             var proxy = new TmdbProxy();
 
             var reader = new ArchiveReader(proxy);
-            int entriesCount = reader.CountLines(movieIdsPath);
-            var entries = reader.ReadMovies(movieIdsPath);
+            int entriesCount = reader.CountLines(idsPath);
+            reader.SkippedId += CountSkippedId;
+
+            IEnumerable<Entry> entries;
+            if (choice == MovieChoice)
+            {
+                entries = reader.Read<Movie>(idsPath);
+            }
+            else if (choice == TvSeriesChoice)
+            {
+                entries = reader.Read<TvSeries>(idsPath);
+            }
+            else
+            {
+                Logger.Instance.LogError(choice + " not handled.");
+                return;
+            }
+            
 
             string outputFilePath = Path.Combine(spiderFolder, now + "_output.spdr");
             
             var serializer = new HighPressureSerializer(outputFilePath);
-
-            int i = 0;
+            
             var chrono = Stopwatch.StartNew();
+
+            int threshold = 0;
+
             foreach (var entry in entries)
             {
-                i++;
-                if (i % 100 == 0)
+                _progress++;
+                if (_progress > threshold)
                 {
-                    float progress = (float)i / entriesCount * 100;
-                    Logger.Instance.LogMessage($"{i}/{entriesCount} ({progress:##0.000}%) - elapsed: {chrono.Elapsed}");
+                    float progress = (float)_progress / entriesCount * 100;
+                    Logger.Instance.LogMessage($"{_progress}/{entriesCount} ({progress:##0.000}%) - elapsed: {chrono.Elapsed}");
+
+                    threshold = _progress + 100;
                 }
 
                 if (string.IsNullOrEmpty(entry.MainImagePath))
@@ -76,6 +118,11 @@ namespace Runner
 
             Console.WriteLine("Job done, press any key");
             Console.ReadKey();
+        }
+
+        private static void CountSkippedId(ulong obj)
+        {
+            _progress++;
         }
     }
 }

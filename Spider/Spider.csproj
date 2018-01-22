@@ -53,11 +53,11 @@
     <Compile Include="ArachneeCore\DefaultEntry.cs" />
     <Compile Include="ArachneeCore\Entry.cs" />
     <Compile Include="ArachneeCore\Movie.cs" />
-    <Compile Include="ArachneeCore\Serie.cs" />
     <Compile Include="ArachneeCore\TmdbProxy.cs" />
     <Compile Include="Exports\ArchiveDownloader.cs" />
     <Compile Include="Exports\ArchiveEntry.cs" />
     <Compile Include="Exports\ArchiveReader.cs" />
+    <Compile Include="ArachneeCore\TvSeries.cs" />
     <Compile Include="Serialization\HighPressureSerializer.cs" />
     <Compile Include="LimitedQueue.cs" />
     <Compile Include="Logger.cs" />
@@ -67,6 +67,7 @@
     <Compile Include="Tmdb\TmdbObjects\CombinedResult.cs" />
     <Compile Include="Tmdb\TmdbObjects\Configuration.cs" />
     <Compile Include="Tmdb\Constant.cs" />
+    <Compile Include="Tmdb\TmdbObjects\CreatedBy.cs" />
     <Compile Include="Tmdb\TmdbObjects\Credits.cs" />
     <Compile Include="Tmdb\TmdbObjects\Crew.cs" />
     <Compile Include="Tmdb\FailedRequestException.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Tmdb\TmdbObjects\TmdbMovie.cs" />
     <Compile Include="Tmdb\TmdbObjects\TmdbPerson.cs" />
     <Compile Include="Exports\Unzipper.cs" />
+    <Compile Include="Tmdb\TmdbObjects\TmdbTvSeries.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

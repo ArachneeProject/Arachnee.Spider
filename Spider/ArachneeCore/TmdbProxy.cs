@@ -59,10 +59,10 @@ namespace Spider.ArachneeCore
             {
                 throw new ArgumentException($"\"{entryId}\" is not a valid id.", nameof(entryId));
             }
-            
-            // download and convert the tmdb object to its corresponding Entry
+
+            // convert the tmdb object to its corresponding Entry
             Entry entry;
-            switch (entryType) // TODO: Handle Serie
+            switch (entryType)
             {
                 case nameof(Movie):
                     var tmdbMovie = _client.GetMovie(id);
@@ -74,12 +74,17 @@ namespace Spider.ArachneeCore
                     entry = ConvertToArtist(tmdbPerson);
                     break;
 
+                case nameof(TvSeries):
+                    var tmdbTvSeries = _client.GetTvSeries(id);
+                    entry = ConvertToTvSeries(tmdbTvSeries);
+                    break;
+
                 default:
                     throw new ArgumentException(
                         $"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.",
                         nameof(entryId));
             }
-            
+
             return entry;
         }
 
@@ -100,7 +105,7 @@ namespace Spider.ArachneeCore
             foreach (var cast in tmdbPerson.CombinedCredits.Cast.Where(c => !string.IsNullOrEmpty(c.PosterPath)))
             {
                 var id = cast.MediaType == "tv"
-                    ? nameof(Serie) + IdSeparator + cast.Id
+                    ? nameof(TvSeries) + IdSeparator + cast.Id
                     : nameof(Movie) + IdSeparator + cast.Id;
 
                 artist.Connections.Add(new Connection
@@ -190,6 +195,24 @@ namespace Spider.ArachneeCore
             }
 
             return movie;
+        }
+
+        private TvSeries ConvertToTvSeries(TmdbTvSeries tmdbTvSeries)
+        {
+            var tvSeries = JsonConvert.DeserializeObject<TvSeries>(
+                JsonConvert.SerializeObject(tmdbTvSeries, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
+
+            var creators = tmdbTvSeries.CreatedBy.Select(creator => nameof(Artist) + IdSeparator + creator.Id.ToString());
+            tvSeries.Connections.AddRange(creators.Select(creator => new Connection
+            {
+                ConnectedId = creator,
+                Label = "Created by",
+                Type = ConnectionType.CreatedBy
+            }));
+
+            tvSeries.MainImagePath = tmdbTvSeries.PosterPath;
+
+            return tvSeries;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Spider.ArachneeCore
 
         public string Deathday { get; set; }
 
-        public int Gender { get; set; }
+        public int? Gender { get; set; }
 
         public string Homepage { get; set; }
 

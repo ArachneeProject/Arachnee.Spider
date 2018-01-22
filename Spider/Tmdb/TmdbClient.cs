@@ -60,7 +60,29 @@ namespace Spider.Tmdb
 
             return person;
         }
-        
+
+        public TmdbTvSeries GetTvSeries(ulong tvId)
+        {
+            var request = new RestRequest("tv/{id}", Method.GET)
+            {
+                RequestFormat = DataFormat.Json
+            };
+
+            request.AddUrlSegment("id", tvId.ToString());
+            request.AddQueryParameter("append_to_response", "credits");
+            request.AddQueryParameter("api_key", Constant.ApiKey);
+
+            var response = ExecuteRequest(request);
+
+            var tv = JsonConvert.DeserializeObject<TmdbTvSeries>(response, TmdbJsonSettings.Instance);
+            if (tv.Id == default(ulong))
+            {
+                throw new ArgumentException($"Tv series id \"{tvId}\" didn't return any result.");
+            }
+
+            return tv;
+        }
+
         private string ExecuteRequest(IRestRequest request)
         {
             var response = _client.Execute(request);
