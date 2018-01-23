@@ -102,7 +102,7 @@ namespace Runner
                 }
                 
                 var connectionsToCompress = new List<Connection>();
-                foreach (var connection in entry.Connections.Where(c => c.Type == ConnectionType.Actor || c.Type == ConnectionType.Director))
+                foreach (var connection in entry.Connections.Where(c => c.Type != ConnectionType.Crew))
                 {
                     Logger.Instance.LogDebug(entry + " :: " + connection.Label + " :: " + connection.ConnectedId);
                     connectionsToCompress.Add(connection);
