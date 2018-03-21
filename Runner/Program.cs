@@ -9,7 +9,7 @@ namespace Runner
 {
     class Program
     {
-        private const int MaxBound = 100;
+        private const int MaxBound = 50;
         private const LogLevel MinLogLevel = LogLevel.Info;
 
         static void Main(string[] args)

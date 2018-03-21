@@ -22,7 +22,7 @@ namespace Spider
         public Logger(string logFile)
         {
             _logFile = logFile;
-            File.AppendAllText(logFile, string.Empty);
+            //File.AppendAllText(logFile, string.Empty);
         }
 
         public static Logger Instance
@@ -51,7 +51,7 @@ namespace Spider
             }
 
             Console.WriteLine(message);
-            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} DEBUG: " + message);
+            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} DEBUG: " + message);
         }
 
         public void LogInfo(string message)
@@ -62,7 +62,7 @@ namespace Spider
             }
 
             Console.WriteLine(message);
-            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} INFO: " + message);
+            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} INFO: " + message);
         }
 
         public void LogWarning(string message)
@@ -73,7 +73,7 @@ namespace Spider
             }
 
             Console.WriteLine(message);
-            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} WARNING: " + message);
+            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} WARNING: " + message);
         }
 
         public void LogError(string error)
@@ -84,7 +84,7 @@ namespace Spider
             }
 
             Console.WriteLine(error);
-            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} ERROR: " + error);
+            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} ERROR: " + error);
         }
 
         public void LogException(Exception exception)
@@ -95,7 +95,7 @@ namespace Spider
             }
 
             Console.WriteLine(exception.Message);
-            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} EXCEPTION: " + exception);
+            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} EXCEPTION: " + exception);
         }
     }
 }

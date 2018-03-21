@@ -29,6 +29,7 @@ namespace Spider
         
         public async Task CrawlEntities(Entity entity, List<int> ids, int maxBound, IProgress<double> progress)
         {
+            Logger.Instance.LogInfo($"Crawling entities of type {entity}...");
             progress.Report(0);
 
             if (maxBound > ids.Count)
@@ -67,19 +68,19 @@ namespace Spider
                     switch (entity)
                     {
                         case Entity.Movie:
-                            crawledEntity = await _client.GetMovieAsync(id, (MovieMethods)~0);
+                            crawledEntity = await _client.GetMovieAsync(id, (MovieMethods) 4239);
                             break;
 
                         case Entity.Person:
-                            crawledEntity = await _client.GetPersonAsync(id, (PersonMethods)~0);
+                            crawledEntity = await _client.GetPersonAsync(id, (PersonMethods) 31);
                             break;
 
                         case Entity.TvSeries:
-                            crawledEntity = await _client.GetTvShowAsync(id, (TvShowMethods)~0);
+                            crawledEntity = await _client.GetTvShowAsync(id, (TvShowMethods) 127);
                             break;
 
                         case Entity.Collection:
-                            crawledEntity = await _client.GetCollectionAsync(id, (CollectionMethods)~0);
+                            crawledEntity = await _client.GetCollectionAsync(id, CollectionMethods.Images);
                             break;
 
                         case Entity.Keyword:
@@ -109,8 +110,9 @@ namespace Spider
 
                 File.WriteAllText(filePath, serialized);
             }
-
+            
             progress.Report(1);
+            Logger.Instance.LogInfo($"Crawling of enties {entity} done.");
         }
 
         public async Task CrawlLabels(Label label, IProgress<double> progress)

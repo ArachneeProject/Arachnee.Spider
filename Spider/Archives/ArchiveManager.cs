@@ -39,10 +39,11 @@ namespace Spider.Archives
         {
             var chrono = Stopwatch.StartNew();
 
+            Logger.Instance.LogInfo("Downloading...");
             Download(archiveDate, entities);
-
             Logger.Instance.LogInfo("Download took " + chrono.Elapsed);
 
+            Logger.Instance.LogInfo("Unzipping...");
             foreach (var kvp in DownloadedArchivePaths)
             {
                 var unzippedFile = UnzipDownloadedArchives(kvp.Value);
@@ -51,6 +52,7 @@ namespace Spider.Archives
 
             Logger.Instance.LogInfo("Unzip took " + chrono.Elapsed);
 
+            Logger.Instance.LogInfo("Loading ids...");
             foreach (var kvp in UnzippedArchivePaths)
             {
                 var ids = ReadIds(kvp.Value);
