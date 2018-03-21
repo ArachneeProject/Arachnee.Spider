@@ -54,12 +54,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entity.cs" />
-    <Compile Include="Exports\ArchiveManager.cs" />
-    <Compile Include="Exports\ArchiveEntry.cs" />
-    <Compile Include="Exports\FailedRequestException.cs" />
+    <Compile Include="Archives\ArchiveManager.cs" />
+    <Compile Include="Archives\ArchiveEntry.cs" />
+    <Compile Include="Archives\FailedRequestException.cs" />
+    <Compile Include="Label.cs" />
     <Compile Include="Serialization\HighPressureSerializer.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TmdbCrawler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

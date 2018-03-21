@@ -1,7 +1,7 @@
 ﻿using RestSharp;
 using System;
 
-namespace Spider.Exports
+namespace Spider.Archives
 {
     internal class FailedRequestException : Exception
     {

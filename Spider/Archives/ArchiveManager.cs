@@ -8,8 +8,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 
-
-namespace Spider.Exports
+namespace Spider.Archives
 {
     public class ArchiveManager
     {

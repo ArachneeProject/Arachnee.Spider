@@ -1,14 +1,16 @@
 ﻿using Spider;
-using Spider.Exports;
+using Spider.Archives;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace Runner
 {
     class Program
     {
-        private static int _progress = 0;
+        private const int MaxBound = 100;
+        private const LogLevel MinLogLevel = LogLevel.Info;
 
         static void Main(string[] args)
         {
@@ -23,7 +25,7 @@ namespace Runner
             var now = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
             var logFilePath = Path.Combine(spiderFolder, now + "_spider.log");
             Logger.Initialize(logFilePath);
-            Logger.Instance.MinLogLevel = LogLevel.Info;
+            Logger.Instance.MinLogLevel = MinLogLevel;
 
             Console.WriteLine("Log file at " + logFilePath);
             
@@ -52,79 +54,46 @@ namespace Runner
                 Directory.CreateDirectory(archiveFolder);
             }
 
-            var downloader = new ArchiveManager(archiveFolder);
-            downloader.LoadIds(DateTime.UtcNow.AddDays(-2), entities);
+            var archiveManager = new ArchiveManager(archiveFolder);
+            archiveManager.LoadIds(DateTime.UtcNow.AddDays(-2), entities);
             
+            // init crawler
+            if (args.Length < 1)
+            {
+                Logger.Instance.LogError("No api key was given as argument of the program.");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                return;
+            }
 
-            //var proxy = new TmdbProxy();
+            var databasePath = Path.Combine(spiderFolder, "Database");
+            if (!Directory.Exists(databasePath))
+            {
+                Directory.CreateDirectory(databasePath);
+            }
 
-            //var reader = new ArchiveReader(proxy);
-            //int entriesCount = reader.CountLines(idsPath);
-            //reader.SkippedId += CountSkippedId;
+            var crawler = new TmdbCrawler(args[0], databasePath);
 
-            //IEnumerable<Entry> entries;
-            //if (input == MovieChoice)
-            //{
-            //    entries = reader.Read<Movie>(idsPath);
-            //}
-            //else if (input == TvSeriesChoice)
-            //{
-            //    entries = reader.Read<TvSeries>(idsPath);
-            //}
-            //else
-            //{
-            //    Logger.Instance.LogError(input + " not handled.");
-            //    return;
-            //}
-            
+            var chrono = Stopwatch.StartNew();
+            foreach (var kvp in archiveManager.LoadedIds)
+            {
+                var progress = new Progress<double>();
+                progress.ProgressChanged += PrintProgress;
 
-            //string outputFilePath = Path.Combine(spiderFolder, now + "_output.spdr");
-            
-            //var serializer = new HighPressureSerializer(outputFilePath);
-            
-            //var chrono = Stopwatch.StartNew();
+                crawler.CrawlEntities(kvp.Key, kvp.Value, MaxBound, progress).Wait();
 
-            //int threshold = 0;
+                progress.ProgressChanged -= PrintProgress;
+            }
+            chrono.Stop();
 
-            //foreach (var entry in entries)
-            //{
-            //    _progress++;
-            //    if (_progress > threshold)
-            //    {
-            //        float progress = (float)_progress / entriesCount * 100;
-            //        Logger.Instance.LogInfo($"{_progress}/{entriesCount} ({progress:##0.000}%) - elapsed: {chrono.Elapsed}");
-
-            //        threshold = _progress + 100;
-            //    }
-
-            //    if (string.IsNullOrEmpty(entry.MainImagePath))
-            //    {
-            //        Logger.Instance.LogDebug("Skip " + entry + " because it has no image.");
-            //        continue;
-            //    }
-                
-            //    var connectionsToCompress = new List<Connection>();
-            //    foreach (var connection in entry.Connections.Where(c => c.Type != ConnectionType.Crew))
-            //    {
-            //        Logger.Instance.LogDebug(entry + " :: " + connection.Label + " :: " + connection.ConnectedId);
-            //        connectionsToCompress.Add(connection);
-            //    }
-
-            //    if (connectionsToCompress.Count == 0)
-            //    {
-            //        continue;
-            //    }
-
-            //    serializer.CompressAndWrite(entry.Id, connectionsToCompress);
-            //}
-
-            Console.WriteLine("Job done, press any key");
+            Console.WriteLine("Crawling done, it took " + chrono.Elapsed + " to complete.");
+            Console.WriteLine("Press any key...");
             Console.ReadKey();
         }
 
-        private static void CountSkippedId(ulong obj)
+        private static void PrintProgress(object sender, double e)
         {
-            _progress++;
+            Logger.Instance.LogInfo("Progress: " + e * 100 + "%");
         }
     }
 }

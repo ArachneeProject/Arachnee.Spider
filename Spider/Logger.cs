@@ -16,12 +16,12 @@ namespace Spider
     {
         private static Logger _logger;
         private readonly string _logFile;
-
+        
         public LogLevel MinLogLevel { get; set; } = LogLevel.Info;
 
         public Logger(string logFile)
         {
-            this._logFile = logFile;
+            _logFile = logFile;
             File.AppendAllText(logFile, string.Empty);
         }
 
@@ -95,7 +95,7 @@ namespace Spider
             }
 
             Console.WriteLine(exception.Message);
-            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} EXCEPTION: " + exception.Message + "\n" + exception.StackTrace);
+            File.AppendAllText(_logFile, $"\n{DateTime.Now:G} EXCEPTION: " + exception);
         }
     }
 }
