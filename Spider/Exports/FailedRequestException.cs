@@ -1,13 +1,13 @@
-﻿using System;
-using RestSharp;
+﻿using RestSharp;
+using System;
 
-namespace Spider.Tmdb
+namespace Spider.Exports
 {
-    public class FailedRequestException : Exception
+    internal class FailedRequestException : Exception
     {
         public IRestResponse Response { get; }
 
-        public FailedRequestException(string request, IRestResponse response) 
+        public FailedRequestException(string request, IRestResponse response)
             : base($"Request \"{request}\" failed with code {response.StatusCode}: {response.ErrorMessage}{response.ErrorException}{response.Content}")
         {
             Response = response;

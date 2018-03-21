@@ -30,14 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.1.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.1.0\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.2.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.2.1\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -45,51 +48,21 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="TMDbLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\TMDbLib.1.0.0\lib\net46\TMDbLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArachneeCore\Artist.cs" />
-    <Compile Include="ArachneeCore\Connection.cs" />
-    <Compile Include="ArachneeCore\ConnectionType.cs" />
-    <Compile Include="ArachneeCore\DefaultEntry.cs" />
-    <Compile Include="ArachneeCore\Entry.cs" />
-    <Compile Include="ArachneeCore\Movie.cs" />
-    <Compile Include="ArachneeCore\TmdbProxy.cs" />
-    <Compile Include="Exports\ArchiveDownloader.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="Exports\ArchiveManager.cs" />
     <Compile Include="Exports\ArchiveEntry.cs" />
-    <Compile Include="Exports\ArchiveReader.cs" />
-    <Compile Include="ArachneeCore\TvSeries.cs" />
+    <Compile Include="Exports\FailedRequestException.cs" />
     <Compile Include="Serialization\HighPressureSerializer.cs" />
-    <Compile Include="LimitedQueue.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Tmdb\TmdbObjects\BelongsToCollection.cs" />
-    <Compile Include="Tmdb\TmdbObjects\Cast.cs" />
-    <Compile Include="Tmdb\TmdbObjects\CombinedCredits.cs" />
-    <Compile Include="Tmdb\TmdbObjects\CombinedResult.cs" />
-    <Compile Include="Tmdb\TmdbObjects\Configuration.cs" />
-    <Compile Include="Tmdb\Constant.cs" />
-    <Compile Include="Tmdb\TmdbObjects\CreatedBy.cs" />
-    <Compile Include="Tmdb\TmdbObjects\Credits.cs" />
-    <Compile Include="Tmdb\TmdbObjects\Crew.cs" />
-    <Compile Include="Tmdb\FailedRequestException.cs" />
-    <Compile Include="Tmdb\TmdbObjects\IdentifiedName.cs" />
-    <Compile Include="Tmdb\TmdbObjects\ImageConfiguration.cs" />
-    <Compile Include="Tmdb\TmdbObjects\ImageDetails.cs" />
-    <Compile Include="Tmdb\TmdbObjects\Images.cs" />
-    <Compile Include="Tmdb\TmdbObjects\Job.cs" />
-    <Compile Include="Tmdb\TmdbObjects\KnownFor.cs" />
-    <Compile Include="Tmdb\TmdbObjects\OfficialJobList.cs" />
-    <Compile Include="Tmdb\TmdbObjects\ProductionCountry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tmdb\TmdbObjects\SearchResultPage.cs" />
-    <Compile Include="Tmdb\TmdbObjects\SpokenLanguage.cs" />
-    <Compile Include="Tmdb\TmdbClient.cs" />
-    <Compile Include="Tmdb\TmdbJsonSettings.cs" />
-    <Compile Include="Tmdb\TmdbObjects\TmdbMovie.cs" />
-    <Compile Include="Tmdb\TmdbObjects\TmdbPerson.cs" />
-    <Compile Include="Exports\Unzipper.cs" />
-    <Compile Include="Tmdb\TmdbObjects\TmdbTvSeries.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
