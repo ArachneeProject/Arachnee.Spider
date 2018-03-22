@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using TMDbLib.Client;
 using TMDbLib.Objects.Collections;
 using TMDbLib.Objects.Movies;
@@ -27,16 +26,10 @@ namespace Spider
             _destinationFolder = destinationFolder;
         }
         
-        public async Task CrawlEntities(Entity entity, List<int> ids, int maxBound, IProgress<double> progress)
+        public void CrawlEntities(Entity entity, List<int> ids, int maxBound, IProgress<double> progress)
         {
             Logger.Instance.LogInfo($"Crawling entities of type {entity}...");
-            progress.Report(0);
-
-            if (maxBound > ids.Count)
-            {
-                maxBound = ids.Count;
-            }
-
+            
             var entityFolder = Path.Combine(_destinationFolder, "Entities", entity.ToString());
             if (!Directory.Exists(entityFolder))
             {
@@ -44,6 +37,11 @@ namespace Spider
             }
 
             double count = 0;
+            if (maxBound > ids.Count)
+            {
+                maxBound = ids.Count;
+            }
+
             foreach (var id in ids)
             {
                 if (count > maxBound)
@@ -68,23 +66,23 @@ namespace Spider
                     switch (entity)
                     {
                         case Entity.Movie:
-                            crawledEntity = await _client.GetMovieAsync(id, (MovieMethods) 4239);
+                            crawledEntity = _client.GetMovieAsync(id, (MovieMethods) 4239).Result;
                             break;
 
                         case Entity.Person:
-                            crawledEntity = await _client.GetPersonAsync(id, (PersonMethods) 31);
+                            crawledEntity = _client.GetPersonAsync(id, (PersonMethods) 31).Result;
                             break;
 
                         case Entity.TvSeries:
-                            crawledEntity = await _client.GetTvShowAsync(id, (TvShowMethods) 127);
+                            crawledEntity = _client.GetTvShowAsync(id, (TvShowMethods) 127).Result;
                             break;
 
                         case Entity.Collection:
-                            crawledEntity = await _client.GetCollectionAsync(id, CollectionMethods.Images);
+                            crawledEntity = _client.GetCollectionAsync(id, CollectionMethods.Images).Result;
                             break;
 
                         case Entity.Keyword:
-                            crawledEntity = await _client.GetKeywordAsync(id);
+                            crawledEntity = _client.GetKeywordAsync(id).Result;
                             break;
 
                         default:
@@ -115,7 +113,7 @@ namespace Spider
             Logger.Instance.LogInfo($"Crawling of enties {entity} done.");
         }
 
-        public async Task CrawlLabels(Label label, IProgress<double> progress)
+        public void CrawlLabels(Label label, IProgress<double> progress)
         {
             progress.Report(0);
 
@@ -138,7 +136,7 @@ namespace Spider
                 switch (label)
                 {
                     case Label.Job:
-                        crawledLabels = await _client.GetJobsAsync();
+                        crawledLabels = _client.GetJobsAsync().Result;
                         break;
                     case Label.Genre:
                         Logger.Instance.LogWarning("Genre are not available (yet?).");

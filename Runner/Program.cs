@@ -45,6 +45,13 @@ namespace Runner
                 }
             }
 
+            if (entities.Count == 0)
+            {
+                Logger.Instance.LogInfo("Nothing to do. Press any key...");
+                Console.ReadKey();
+                return;
+            }
+
             Logger.Instance.LogInfo($"Asked to download {string.Join(",", entities)}");
 
             // init archive
@@ -80,7 +87,7 @@ namespace Runner
                 var progress = new Progress<double>();
                 progress.ProgressChanged += PrintProgress;
 
-                crawler.CrawlEntities(kvp.Key, kvp.Value, MaxBound, progress).Wait();
+                crawler.CrawlEntities(kvp.Key, kvp.Value, MaxBound, progress);
 
                 progress.ProgressChanged -= PrintProgress;
             }
