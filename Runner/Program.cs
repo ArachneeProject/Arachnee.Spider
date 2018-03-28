@@ -84,6 +84,11 @@ namespace Runner
                     Console.ReadKey();
                     return;
                 }
+
+                if (maxBound <= 0)
+                {
+                    maxBound = int.MaxValue;
+                }
             }
 
             // init archive
