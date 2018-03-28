@@ -4,15 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Runner
 {
     class Program
     {
-        private const int MaxBound = 50;
-        private const LogLevel MinLogLevel = LogLevel.Info;
-        private const bool ExcludeAdultIds = true;
-        private const double MinPopularity = 0.1;
+        private const int DefaultMaxBound = 50;
+        private const LogLevel DefaultMinLogLevel = LogLevel.Info;
+        private const bool DefaultExcludeAdultIds = true;
+        private const double DefaultMinPopularity = 0.1;
 
         private static Logger _logger;
 
@@ -28,34 +29,62 @@ namespace Runner
             // init logger
             var now = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
             var logFilePath = Path.Combine(spiderFolder, now + "_spider.log");
-            _logger = new Logger(logFilePath) {MinLogLevel = MinLogLevel};
+            _logger = new Logger(logFilePath) {MinLogLevel = DefaultMinLogLevel};
 
             Console.WriteLine("Log file at " + logFilePath);
             
-            // user input
+            // entity types user input
             Console.WriteLine($"Available options are: {string.Join(",", Enum.GetNames(typeof(EntityType)))}.");
-            Console.WriteLine("Write what to load (separated by commas)...");
+            Console.WriteLine("Press enter to download everything, or write what to load (separated by commas)...");
 
             var input = Console.ReadLine();
-            var choices = input.Replace(" ", "").Split(',');
 
-            var entities = new List<EntityType>();
-            foreach (var choice in choices)
+            var entityTypes = new List<EntityType>();
+            if (string.IsNullOrEmpty(input))
             {
-                if (Enum.TryParse(choice, true, out EntityType entiy))
+                var allTypes = Enum.GetValues(typeof(EntityType));
+                entityTypes.AddRange(allTypes.Cast<EntityType>());
+            }
+            else
+            {
+                var choices = input.Replace(" ", "").Split(',');
+                foreach (var choice in choices)
                 {
-                    entities.Add(entiy);
+                    if (Enum.TryParse(choice, true, out EntityType entiy))
+                    {
+                        entityTypes.Add(entiy);
+                    }
                 }
             }
-
-            if (entities.Count == 0)
+            
+            if (entityTypes.Count == 0)
             {
                 _logger.LogInfo("Nothing to do. Press any key...");
                 Console.ReadKey();
                 return;
             }
 
-            _logger.LogInfo($"Asked to download {string.Join(",", entities)}");
+            _logger.LogInfo($"Asked to download {string.Join(",", entityTypes)}");
+
+            // items count user input
+            Console.WriteLine($"Press enter to download {DefaultMaxBound} itmes of each, or write 0 to get them all, or write the number of items you want...");
+
+            input = Console.ReadLine();
+
+            int maxBound;
+            if (string.IsNullOrEmpty(input))
+            {
+                maxBound = DefaultMaxBound;
+            }
+            else
+            {
+                if (!int.TryParse(input, out maxBound))
+                {
+                    _logger.LogError($"{input} is not a number. Press any key to exit...");
+                    Console.ReadKey();
+                    return;
+                }
+            }
 
             // init archive
             var archiveFolder = Path.Combine(spiderFolder, "archives");
@@ -66,11 +95,11 @@ namespace Runner
 
             var archiveManager = new ArchiveManager(archiveFolder, _logger)
             {
-                MinPopularity = MinPopularity,
-                ExcludeAdultIds = ExcludeAdultIds
+                MinPopularity = DefaultMinPopularity,
+                ExcludeAdultIds = DefaultExcludeAdultIds
             };
 
-            archiveManager.LoadIds(DateTime.UtcNow.AddDays(-2), entities);
+            archiveManager.LoadIds(DateTime.UtcNow.AddDays(-2), entityTypes);
             
             // init crawler
             if (args.Length < 1)
@@ -95,7 +124,7 @@ namespace Runner
                 var progress = new Progress<double>();
                 progress.ProgressChanged += PrintProgress;
 
-                crawler.CrawlEntities(kvp.Key, kvp.Value, MaxBound, progress);
+                crawler.CrawlEntities(kvp.Key, kvp.Value, maxBound, progress);
 
                 progress.ProgressChanged -= PrintProgress;
             }
