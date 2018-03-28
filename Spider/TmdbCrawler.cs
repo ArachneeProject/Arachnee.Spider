@@ -14,8 +14,9 @@ namespace Spider
     {
         private readonly TMDbClient _client;
         private readonly string _destinationFolder;
+        private readonly Logger _logger;
 
-        public TmdbCrawler(string apiKey, string destinationFolder)
+        public TmdbCrawler(string apiKey, string destinationFolder, Logger logger)
         {
             if (!Directory.Exists(destinationFolder))
             {
@@ -24,16 +25,42 @@ namespace Spider
 
             _client = new TMDbClient(apiKey);
             _destinationFolder = destinationFolder;
+            _logger = logger;
         }
         
         public void CrawlEntities(EntityType entityType, List<int> ids, int maxBound, IProgress<double> progress)
         {
-            Logger.Instance.LogInfo($"Crawling entities of type {entityType}...");
+            _logger.LogInfo($"Crawling entities of type {entityType}...");
             
-            var entityFolder = Path.Combine(_destinationFolder, "Entities", entityType.ToString());
-            if (!Directory.Exists(entityFolder))
+            var entitiesFolder = Path.Combine(_destinationFolder, "Entities", entityType.ToString());
+            if (!Directory.Exists(entitiesFolder))
             {
-                Directory.CreateDirectory(entityFolder);
+                Directory.CreateDirectory(entitiesFolder);
+            }
+            
+            var alreadyCrawledIdsFilePath = Path.Combine(entitiesFolder, $"{entityType.ToString()}_crawled_ids.json");
+            if (!File.Exists(alreadyCrawledIdsFilePath))
+            {
+                File.WriteAllText(alreadyCrawledIdsFilePath, string.Empty);
+            }
+
+            var alreadyCrawledIds = new HashSet<int>();
+            using (var reader = new StreamReader(alreadyCrawledIdsFilePath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (int.TryParse(line, out var crawledId))
+                    {
+                        alreadyCrawledIds.Add(crawledId);
+                    }
+                }
+            }
+
+            var entityFilePath = Path.Combine(entitiesFolder, $"{entityType.ToString()}.json");
+            if (!File.Exists(entityFilePath))
+            {
+                File.WriteAllText(entityFilePath, string.Empty);
             }
 
             double count = 0;
@@ -42,75 +69,84 @@ namespace Spider
                 maxBound = ids.Count;
             }
 
-            foreach (var id in ids)
+            using (var entityWriter = new StreamWriter(entityFilePath))
             {
-                if (count > maxBound)
+                using (var idWriter = new StreamWriter(alreadyCrawledIdsFilePath, append:true))
                 {
-                    break;
-                }
-
-                Logger.Instance.LogDebug($"Processing {entityType} {id}...");
-                progress.Report(count / maxBound);
-                count++;
-
-                string filePath = Path.Combine(entityFolder, id + ".json");
-                if (File.Exists(filePath))
-                {
-                    Logger.Instance.LogDebug($"File {filePath} already exists.");
-                    continue;
-                }
-
-                object crawledEntity = null;
-                try
-                {
-                    switch (entityType)
+                    foreach (var id in ids)
                     {
-                        case EntityType.Movie:
-                            crawledEntity = _client.GetMovieAsync(id, (MovieMethods) 4239).Result;
+                        if (count > maxBound)
+                        {
                             break;
+                        }
 
-                        case EntityType.Person:
-                            crawledEntity = _client.GetPersonAsync(id, (PersonMethods) 31).Result;
-                            break;
+                        _logger.LogDebug($"Processing {entityType} {id}...");
+                        progress.Report(count / maxBound);
+                        count++;
+                        
+                        if (alreadyCrawledIds.Contains(id))
+                        {
+                            _logger.LogDebug($"{entityType} {id} was already crawled.");
+                            continue;
+                        }
 
-                        case EntityType.TvSeries:
-                            crawledEntity = _client.GetTvShowAsync(id, (TvShowMethods) 127).Result;
-                            break;
+                        object crawledEntity = null;
+                        try
+                        {
+                            switch (entityType)
+                            {
+                                case EntityType.Movie:
+                                    crawledEntity = _client.GetMovieAsync(id, (MovieMethods)4239).Result;
+                                    break;
 
-                        case EntityType.Collection:
-                            crawledEntity = _client.GetCollectionAsync(id, CollectionMethods.Images).Result;
-                            break;
+                                case EntityType.Person:
+                                    crawledEntity = _client.GetPersonAsync(id, (PersonMethods)31).Result;
+                                    break;
 
-                        case EntityType.Keyword:
-                            crawledEntity = _client.GetKeywordAsync(id).Result;
-                            break;
+                                case EntityType.TvSeries:
+                                    crawledEntity = _client.GetTvShowAsync(id, (TvShowMethods)127).Result;
+                                    break;
 
-                        default:
-                            Logger.Instance.LogError($"EntityType {entityType} is not handled.");
-                            break;
+                                case EntityType.Collection:
+                                    crawledEntity = _client.GetCollectionAsync(id, CollectionMethods.Images).Result;
+                                    break;
+
+                                case EntityType.Keyword:
+                                    crawledEntity = _client.GetKeywordAsync(id).Result;
+                                    break;
+
+                                default:
+                                    _logger.LogError($"EntityType {entityType} is not handled.");
+                                    break;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogException(e);
+                        }
+
+                        if (crawledEntity == null)
+                        {
+                            continue;
+                        }
+
+                        var serialized = JsonConvert.SerializeObject(crawledEntity, Formatting.None);
+                        if (string.IsNullOrEmpty(serialized))
+                        {
+                            continue;
+                        }
+
+                        entityWriter.WriteLine(serialized);
+                        alreadyCrawledIds.Add(id);
+                        idWriter.WriteLine(id);
                     }
                 }
-                catch (Exception e)
-                {
-                    Logger.Instance.LogException(e);
-                }
-
-                if (crawledEntity == null)
-                {
-                    continue;
-                }
-
-                var serialized = JsonConvert.SerializeObject(crawledEntity, Formatting.None);
-                if (string.IsNullOrEmpty(serialized))
-                {
-                    continue;
-                }
-
-                File.WriteAllText(filePath, serialized);
             }
+
+            
             
             progress.Report(1);
-            Logger.Instance.LogInfo($"Crawling of enties {entityType} done.");
+            _logger.LogInfo($"Crawling of enties {entityType} done.");
         }
 
         public void CrawlLabels(Label label, IProgress<double> progress)
@@ -126,7 +162,7 @@ namespace Spider
             string filePath = Path.Combine(labelsFolder, label + "s.json");
             if (File.Exists(filePath))
             {
-                Logger.Instance.LogInfo($"File {filePath} already exists.");
+                _logger.LogInfo($"File {filePath} already exists.");
                 return;
             }
 
@@ -139,17 +175,17 @@ namespace Spider
                         crawledLabels = _client.GetJobsAsync().Result;
                         break;
                     case Label.Genre:
-                        Logger.Instance.LogWarning("Genre are not available (yet?).");
+                        _logger.LogWarning("Genre are not available (yet?).");
                         break;
 
                     default:
-                        Logger.Instance.LogError($"Label {label} is not handled.");
+                        _logger.LogError($"Label {label} is not handled.");
                         break;
                 }
             }
             catch (Exception e)
             {
-                Logger.Instance.LogException(e);
+                _logger.LogException(e);
             }
 
             if (crawledLabels == null)

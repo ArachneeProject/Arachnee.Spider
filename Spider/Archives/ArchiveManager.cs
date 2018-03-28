@@ -14,6 +14,7 @@ namespace Spider.Archives
     {
         private readonly RestClient _client = new RestClient("http://files.tmdb.org/p/exports/");
         private readonly string _destinationFolder;
+        private readonly Logger _logger;
 
         public Dictionary<EntityType, string> DownloadedArchivePaths { get; } = new Dictionary<EntityType, string>();
 
@@ -25,7 +26,7 @@ namespace Spider.Archives
 
         public double MinPopularity { get; set; } = 0.1;
 
-        public ArchiveManager(string destinationFolder)
+        public ArchiveManager(string destinationFolder, Logger logger)
         {
             if (!Directory.Exists(destinationFolder))
             {
@@ -33,33 +34,34 @@ namespace Spider.Archives
             }
 
             _destinationFolder = destinationFolder;
+            _logger = logger;
         }
 
         public void LoadIds(DateTime archiveDate, ICollection<EntityType> entities)
         {
             var chrono = Stopwatch.StartNew();
 
-            Logger.Instance.LogInfo("Downloading...");
+            _logger.LogInfo("Downloading...");
             Download(archiveDate, entities);
-            Logger.Instance.LogInfo("Download took " + chrono.Elapsed);
+            _logger.LogInfo("Download took " + chrono.Elapsed);
 
-            Logger.Instance.LogInfo("Unzipping...");
+            _logger.LogInfo("Unzipping...");
             foreach (var kvp in DownloadedArchivePaths)
             {
                 var unzippedFile = UnzipDownloadedArchives(kvp.Value);
                 UnzippedArchivePaths.Add(kvp.Key, unzippedFile);
             }
 
-            Logger.Instance.LogInfo("Unzip took " + chrono.Elapsed);
+            _logger.LogInfo("Unzip took " + chrono.Elapsed);
 
-            Logger.Instance.LogInfo("Loading ids...");
+            _logger.LogInfo("Loading ids...");
             foreach (var kvp in UnzippedArchivePaths)
             {
                 var ids = ReadIds(kvp.Value);
                 LoadedIds.Add(kvp.Key, ids);
             }
 
-            Logger.Instance.LogInfo("Load took " + chrono.Elapsed);
+            _logger.LogInfo("Load took " + chrono.Elapsed);
             chrono.Stop();
         }
         
@@ -94,17 +96,17 @@ namespace Spider.Archives
             string filePath = Path.Combine(_destinationFolder, resource);
             if (File.Exists(filePath))
             {
-                Logger.Instance.LogInfo("No need to re-download " + resource);
+                _logger.LogInfo("No need to re-download " + resource);
                 return filePath;
             }
 
             var request = new RestRequest(resource, Method.GET);
 
-            Logger.Instance.LogInfo("Downloading " + resource + "...");
+            _logger.LogInfo("Downloading " + resource + "...");
 
             var response = _client.Execute(request);
 
-            Logger.Instance.LogInfo("Downloading done.");
+            _logger.LogInfo("Downloading done.");
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -113,7 +115,7 @@ namespace Spider.Archives
 
             File.WriteAllBytes(filePath, response.RawBytes);
 
-            Logger.Instance.LogInfo("Archive file created at " + filePath);
+            _logger.LogInfo("Archive file created at " + filePath);
 
             return filePath;
         }
@@ -122,11 +124,11 @@ namespace Spider.Archives
         {
             if (!File.Exists(gzipFilePath))
             {
-                Logger.Instance.LogError($"Archive file was not found at \"{gzipFilePath}\"");
+                _logger.LogError($"Archive file was not found at \"{gzipFilePath}\"");
                 return string.Empty;
             }
 
-            Logger.Instance.LogInfo("Unzipping " + gzipFilePath);
+            _logger.LogInfo("Unzipping " + gzipFilePath);
 
             string decompressedFilePath;
 
@@ -146,7 +148,7 @@ namespace Spider.Archives
                 }
             }
 
-            Logger.Instance.LogInfo($"File unzipped at {decompressedFilePath}");
+            _logger.LogInfo($"File unzipped at {decompressedFilePath}");
 
             return decompressedFilePath;
         }
@@ -164,12 +166,12 @@ namespace Spider.Archives
 
                     if (archiveEntry.Adult && ExcludeAdultIds)
                     {
-                        Logger.Instance.LogDebug($"Skipped adult: {archiveEntry}");
+                        _logger.LogDebug($"Skipped adult: {archiveEntry}");
                     }
 
                     if (archiveEntry.Popularity < MinPopularity)
                     {
-                        Logger.Instance.LogDebug($"Skipped low popularity: {archiveEntry.Id}");
+                        _logger.LogDebug($"Skipped low popularity: {archiveEntry.Id}");
                     }
 
                     result.Add(archiveEntry.Id);

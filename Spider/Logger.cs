@@ -11,91 +11,57 @@ namespace Spider
         Error = 3,
         Exception = 4
     }
-
-    public class Logger
+    
+    public class Logger : IDisposable
     {
-        private static Logger _logger;
-        private readonly string _logFile;
+        private readonly StreamWriter _writer;
         
         public LogLevel MinLogLevel { get; set; } = LogLevel.Info;
 
-        public Logger(string logFile)
+        public Logger(string filePath)
         {
-            _logFile = logFile;
-            //File.AppendAllText(logFile, string.Empty);
-        }
-
-        public static Logger Instance
-        {
-            get
-            {
-                if (_logger == null)
-                {
-                    throw new Exception("Logger not initialized.");
-                }
-
-                return _logger;
-            }
+            _writer = new StreamWriter(filePath, append:true);
         }
         
-        public static void Initialize(string logFile)
+        public void Dispose()
         {
-            _logger = new Logger(logFile);
+            _writer?.Dispose();
+        }
+
+        public void Log(string message, LogLevel logLevel)
+        {
+            if ((int) logLevel < (int) MinLogLevel)
+            {
+                return;
+            }
+
+            Console.WriteLine(message);
+            _writer.WriteLine($"{DateTime.Now:G} [{logLevel.ToString().ToUpperInvariant()}] " + message);
         }
 
         public void LogDebug(string message)
         {
-            if ((int)LogLevel.Debug < (int)MinLogLevel)
-            {
-                return;
-            }
-
-            Console.WriteLine(message);
-            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} DEBUG: " + message);
+            Log(message, LogLevel.Debug);
         }
 
         public void LogInfo(string message)
         {
-            if ((int)LogLevel.Info < (int)MinLogLevel)
-            {
-                return;
-            }
-
-            Console.WriteLine(message);
-            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} INFO: " + message);
+            Log(message, LogLevel.Info);
         }
 
         public void LogWarning(string message)
         {
-            if ((int)LogLevel.Warning < (int)MinLogLevel)
-            {
-                return;
-            }
-
-            Console.WriteLine(message);
-            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} WARNING: " + message);
+            Log(message, LogLevel.Warning);
         }
 
         public void LogError(string error)
         {
-            if ((int)LogLevel.Error < (int)MinLogLevel)
-            {
-                return;
-            }
-
-            Console.WriteLine(error);
-            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} ERROR: " + error);
+            Log(error, LogLevel.Error);
         }
 
         public void LogException(Exception exception)
         {
-            if ((int)LogLevel.Exception < (int)MinLogLevel)
-            {
-                return;
-            }
-
-            Console.WriteLine(exception.Message);
-            //File.AppendAllText(_logFile, $"\n{DateTime.Now:G} EXCEPTION: " + exception);
+            Log(exception.ToString(), LogLevel.Exception);
         }
     }
 }

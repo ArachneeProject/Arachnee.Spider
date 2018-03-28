@@ -11,6 +11,10 @@ namespace Runner
     {
         private const int MaxBound = 50;
         private const LogLevel MinLogLevel = LogLevel.Info;
+        private const bool ExcludeAdultIds = true;
+        private const double MinPopularity = 0.1;
+
+        private static Logger _logger;
 
         static void Main(string[] args)
         {
@@ -24,8 +28,7 @@ namespace Runner
             // init logger
             var now = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
             var logFilePath = Path.Combine(spiderFolder, now + "_spider.log");
-            Logger.Initialize(logFilePath);
-            Logger.Instance.MinLogLevel = MinLogLevel;
+            _logger = new Logger(logFilePath) {MinLogLevel = MinLogLevel};
 
             Console.WriteLine("Log file at " + logFilePath);
             
@@ -47,12 +50,12 @@ namespace Runner
 
             if (entities.Count == 0)
             {
-                Logger.Instance.LogInfo("Nothing to do. Press any key...");
+                _logger.LogInfo("Nothing to do. Press any key...");
                 Console.ReadKey();
                 return;
             }
 
-            Logger.Instance.LogInfo($"Asked to download {string.Join(",", entities)}");
+            _logger.LogInfo($"Asked to download {string.Join(",", entities)}");
 
             // init archive
             var archiveFolder = Path.Combine(spiderFolder, "archives");
@@ -61,13 +64,18 @@ namespace Runner
                 Directory.CreateDirectory(archiveFolder);
             }
 
-            var archiveManager = new ArchiveManager(archiveFolder);
+            var archiveManager = new ArchiveManager(archiveFolder, _logger)
+            {
+                MinPopularity = MinPopularity,
+                ExcludeAdultIds = ExcludeAdultIds
+            };
+
             archiveManager.LoadIds(DateTime.UtcNow.AddDays(-2), entities);
             
             // init crawler
             if (args.Length < 1)
             {
-                Logger.Instance.LogError("No api key was given as argument of the program.");
+                _logger.LogError("No api key was given as argument of the program.");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
                 return;
@@ -79,7 +87,7 @@ namespace Runner
                 Directory.CreateDirectory(databasePath);
             }
 
-            var crawler = new TmdbCrawler(args[0], databasePath);
+            var crawler = new TmdbCrawler(args[0], databasePath, _logger);
 
             var chrono = Stopwatch.StartNew();
             foreach (var kvp in archiveManager.LoadedIds)
@@ -93,6 +101,8 @@ namespace Runner
             }
             chrono.Stop();
 
+            _logger.Dispose();
+
             Console.WriteLine("Crawling done, it took " + chrono.Elapsed + " to complete.");
             Console.WriteLine("Press any key...");
             Console.ReadKey();
@@ -100,7 +110,7 @@ namespace Runner
 
         private static void PrintProgress(object sender, double e)
         {
-            Logger.Instance.LogInfo("Progress: " + e * 100 + "%");
+            _logger.LogInfo("Progress: " + e * 100 + "%");
         }
     }
 }
