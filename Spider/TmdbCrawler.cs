@@ -69,7 +69,7 @@ namespace Spider
                 maxBound = ids.Count;
             }
 
-            using (var entityWriter = new StreamWriter(entityFilePath))
+            using (var entityWriter = new StreamWriter(entityFilePath, append:true))
             {
                 using (var idWriter = new StreamWriter(alreadyCrawledIdsFilePath, append:true))
                 {
