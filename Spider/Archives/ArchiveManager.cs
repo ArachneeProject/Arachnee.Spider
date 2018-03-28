@@ -15,11 +15,11 @@ namespace Spider.Archives
         private readonly RestClient _client = new RestClient("http://files.tmdb.org/p/exports/");
         private readonly string _destinationFolder;
 
-        public Dictionary<Entity, string> DownloadedArchivePaths { get; } = new Dictionary<Entity, string>();
+        public Dictionary<EntityType, string> DownloadedArchivePaths { get; } = new Dictionary<EntityType, string>();
 
-        public Dictionary<Entity, string> UnzippedArchivePaths { get; } = new Dictionary<Entity, string>();
+        public Dictionary<EntityType, string> UnzippedArchivePaths { get; } = new Dictionary<EntityType, string>();
 
-        public Dictionary<Entity, List<int>> LoadedIds { get; } = new Dictionary<Entity, List<int>>();
+        public Dictionary<EntityType, List<int>> LoadedIds { get; } = new Dictionary<EntityType, List<int>>();
 
         public bool ExcludeAdultIds { get; set; } = true;
 
@@ -35,7 +35,7 @@ namespace Spider.Archives
             _destinationFolder = destinationFolder;
         }
 
-        public void LoadIds(DateTime archiveDate, ICollection<Entity> entities)
+        public void LoadIds(DateTime archiveDate, ICollection<EntityType> entities)
         {
             var chrono = Stopwatch.StartNew();
 
@@ -63,7 +63,7 @@ namespace Spider.Archives
             chrono.Stop();
         }
         
-        private void Download(DateTime archiveDate, ICollection<Entity> entities)
+        private void Download(DateTime archiveDate, ICollection<EntityType> entities)
         {
             if (archiveDate.Kind != DateTimeKind.Utc)
             {

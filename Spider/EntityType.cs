@@ -1,6 +1,6 @@
 ﻿namespace Spider
 {
-    public enum Entity
+    public enum EntityType
     {
         Movie,
         Person,

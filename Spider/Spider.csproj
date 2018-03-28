@@ -54,7 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entity.cs" />
+    <Compile Include="EntityType.cs" />
     <Compile Include="Archives\ArchiveManager.cs" />
     <Compile Include="Archives\ArchiveEntry.cs" />
     <Compile Include="Archives\FailedRequestException.cs" />

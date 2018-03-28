@@ -30,16 +30,16 @@ namespace Runner
             Console.WriteLine("Log file at " + logFilePath);
             
             // user input
-            Console.WriteLine($"Available options are: {string.Join(",", Enum.GetNames(typeof(Entity)))}.");
+            Console.WriteLine($"Available options are: {string.Join(",", Enum.GetNames(typeof(EntityType)))}.");
             Console.WriteLine("Write what to load (separated by commas)...");
 
             var input = Console.ReadLine();
             var choices = input.Replace(" ", "").Split(',');
 
-            var entities = new List<Entity>();
+            var entities = new List<EntityType>();
             foreach (var choice in choices)
             {
-                if (Enum.TryParse(choice, true, out Entity entiy))
+                if (Enum.TryParse(choice, true, out EntityType entiy))
                 {
                     entities.Add(entiy);
                 }

@@ -26,11 +26,11 @@ namespace Spider
             _destinationFolder = destinationFolder;
         }
         
-        public void CrawlEntities(Entity entity, List<int> ids, int maxBound, IProgress<double> progress)
+        public void CrawlEntities(EntityType entityType, List<int> ids, int maxBound, IProgress<double> progress)
         {
-            Logger.Instance.LogInfo($"Crawling entities of type {entity}...");
+            Logger.Instance.LogInfo($"Crawling entities of type {entityType}...");
             
-            var entityFolder = Path.Combine(_destinationFolder, "Entities", entity.ToString());
+            var entityFolder = Path.Combine(_destinationFolder, "Entities", entityType.ToString());
             if (!Directory.Exists(entityFolder))
             {
                 Directory.CreateDirectory(entityFolder);
@@ -49,7 +49,7 @@ namespace Spider
                     break;
                 }
 
-                Logger.Instance.LogDebug($"Processing {entity} {id}...");
+                Logger.Instance.LogDebug($"Processing {entityType} {id}...");
                 progress.Report(count / maxBound);
                 count++;
 
@@ -63,30 +63,30 @@ namespace Spider
                 object crawledEntity = null;
                 try
                 {
-                    switch (entity)
+                    switch (entityType)
                     {
-                        case Entity.Movie:
+                        case EntityType.Movie:
                             crawledEntity = _client.GetMovieAsync(id, (MovieMethods) 4239).Result;
                             break;
 
-                        case Entity.Person:
+                        case EntityType.Person:
                             crawledEntity = _client.GetPersonAsync(id, (PersonMethods) 31).Result;
                             break;
 
-                        case Entity.TvSeries:
+                        case EntityType.TvSeries:
                             crawledEntity = _client.GetTvShowAsync(id, (TvShowMethods) 127).Result;
                             break;
 
-                        case Entity.Collection:
+                        case EntityType.Collection:
                             crawledEntity = _client.GetCollectionAsync(id, CollectionMethods.Images).Result;
                             break;
 
-                        case Entity.Keyword:
+                        case EntityType.Keyword:
                             crawledEntity = _client.GetKeywordAsync(id).Result;
                             break;
 
                         default:
-                            Logger.Instance.LogError($"Entity {entity} is not handled.");
+                            Logger.Instance.LogError($"EntityType {entityType} is not handled.");
                             break;
                     }
                 }
@@ -100,7 +100,7 @@ namespace Spider
                     continue;
                 }
 
-                var serialized = JsonConvert.SerializeObject(crawledEntity, Formatting.Indented);
+                var serialized = JsonConvert.SerializeObject(crawledEntity, Formatting.None);
                 if (string.IsNullOrEmpty(serialized))
                 {
                     continue;
@@ -110,7 +110,7 @@ namespace Spider
             }
             
             progress.Report(1);
-            Logger.Instance.LogInfo($"Crawling of enties {entity} done.");
+            Logger.Instance.LogInfo($"Crawling of enties {entityType} done.");
         }
 
         public void CrawlLabels(Label label, IProgress<double> progress)
