@@ -11,7 +11,7 @@ namespace Spider.Archives
         public int Id { get; set; }
 
         [JsonProperty("popularity")]
-        public float Popularity { get; set; }
+        public float Popularity { get; set; } = -1;
 
         [JsonProperty("name")]
         public string Name { get; set; }

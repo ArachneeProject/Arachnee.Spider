@@ -167,11 +167,14 @@ namespace Spider.Archives
                     if (archiveEntry.Adult && ExcludeAdultIds)
                     {
                         _logger.LogDebug($"Skipped adult: {archiveEntry}");
+						continue;
                     }
 
-                    if (archiveEntry.Popularity < MinPopularity)
+                    if (archiveEntry.Popularity >= 0 //check if type really has a Popularity at all
+                        && archiveEntry.Popularity < MinPopularity)
                     {
                         _logger.LogDebug($"Skipped low popularity: {archiveEntry.Id}");
+						continue;
                     }
 
                     result.Add(archiveEntry.Id);
